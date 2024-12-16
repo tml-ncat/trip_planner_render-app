@@ -1,0 +1,130 @@
+.main-container {
+    background-color: #ffffff;
+    box-sizing: border-box;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+}
+
+.title-container {
+    width: 100%;
+    display: block;
+}
+
+.title {
+    text-align: center;
+    color: #333333;
+    padding: 10px;
+    background-color: #f4f4f9;
+}
+
+.input-label {
+    margin: 5px;
+    color: #555555;
+}
+
+.input-box {
+    width: 100%;
+    margin: 5px;
+}
+
+.hidden-button {
+    margin: 5px;
+    background-color: #1c293a;
+    color: white;
+    display: none;
+}
+
+.hidden-div {
+    display: none;
+}
+
+.radio-items {
+    display: inline-block;
+    margin: 5px;
+}
+
+.datepicker {
+    margin: 5px;
+}
+
+.time-container {
+    margin: 5px;
+}
+
+.time-dropdown {
+    width: 48%;
+    display: inline-block;
+    margin: 5px;
+}
+
+.dropdown {
+    margin: 5px;
+}
+
+.calculate-button {
+    margin: 5px;
+    background-color: #74bf0c;
+    color: black;
+    font-weight: bold;
+}
+
+.start-over-button {
+    margin: 5px;
+    background-color: #D9534F;
+    color: white;
+    font-weight: bold;
+}
+
+.left-panel {
+    width: 50%;
+    display: inline-block;
+    padding: 20px;
+    background-color: #eaeaea;
+    box-sizing: border-box;
+    vertical-align: top;
+}
+
+.right-panel {
+    width: 50%;
+    display: inline-block;
+    padding: 20px;
+    background-color: #eaeaea;
+    box-sizing: border-box;
+    vertical-align: top;
+}
+
+.main-content {
+    display: flex;
+    flex-wrap: wrap;
+    height: auto;
+    box-sizing: border-box;
+}
+
+.mode-button-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.mode-button {
+    margin: 5px;
+    background-color: #1c293a;
+    color: white;
+}
+
+.info-container {
+    padding: 10px;
+    background-color: #f4f4f9;
+    color: #333333;
+    text-align: left;
+}
+
+.map-container {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+}
+
+.map {
+    height: 80vh;
+    width: 100%;
+}
