@@ -4,7 +4,8 @@ set -e  # Stop script if any command fails
 echo "Updating and installing dependencies..."
 
 # Install Java (OpenJDK 17)
-apt-get update && apt-get install -y openjdk-17-jdk
+apt-get update && apt-get install -y openjdk-17-jdk && pip install -r requirements.txt
+
 
 # Ensure Python dependencies are installed
 pip install --upgrade pip setuptools wheel && pip install -r requirements.txt
