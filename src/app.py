@@ -6,10 +6,23 @@ import r5py
 from datetime import datetime, date
 import numpy as np
 import os
+import subprocess 
 
 # Set environment variables for R5
 os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-17-openjdk-amd64"
 os.environ["R5_JAR"] = "../R5.jar"
+
+# # Check Java installation
+# java_path = os.environ.get("JAVA_HOME", "Not Set")
+# print(f"JAVA_HOME is set to: {java_path}")
+
+# # Verify Java version
+# try:
+#     java_version = subprocess.run(["java", "-version"], capture_output=True, text=True, check=True)
+#     print("Java is installed successfully:", java_version.stderr)
+# except Exception as e:
+#     print("Java installation check failed:", e)
+
 
 TRANSIT_FARE_PER_RIDE = 1.00
 
@@ -735,5 +748,10 @@ def toggle_departure_time_div(radio_value):
         return {'display': 'block'}
     return {'display': 'none'}
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+# if __name__ == '__main__':
+#     app.run_server(debug=True)
+# Get the port from the environment (Render assigns one dynamically)
+PORT = int(os.environ.get("PORT", 8080))  # Default to 8080 if PORT is not set
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=PORT, debug=True)
