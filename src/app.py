@@ -7,6 +7,10 @@ from datetime import datetime, date
 import numpy as np
 import os
 
+# Set environment variables for R5
+os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-17-openjdk-amd64
+os.environ["R5_JAR"] = "../R5.jar"
+
 TRANSIT_FARE_PER_RIDE = 1.00
 
 def calculate_fare(base_fare, cost_per_mile, cost_per_minute, service_fee, distance, duration, additional_fees=0):
