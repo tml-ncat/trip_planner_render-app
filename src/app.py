@@ -13,15 +13,15 @@ os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-17-openjdk-amd64"
 os.environ["R5_JAR"] = "../R5.jar"
 
 # # Check Java installation
-# java_path = os.environ.get("JAVA_HOME", "Not Set")
-# print(f"JAVA_HOME is set to: {java_path}")
+java_path = os.environ.get("JAVA_HOME", "Not Set")
+print(f"JAVA_HOME is set to: {java_path}")
 
-# # Verify Java version
-# try:
-#     java_version = subprocess.run(["java", "-version"], capture_output=True, text=True, check=True)
-#     print("Java is installed successfully:", java_version.stderr)
-# except Exception as e:
-#     print("Java installation check failed:", e)
+# Verify Java version
+try:
+    java_version = subprocess.run(["java", "-version"], capture_output=True, text=True, check=True)
+    print("Java is installed successfully:", java_version.stderr)
+except Exception as e:
+    print("Java installation check failed:", e)
 
 
 TRANSIT_FARE_PER_RIDE = 1.00
