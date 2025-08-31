@@ -1,18 +1,21 @@
 services:
-  # See https://render.com/docs/blueprint-spec for more info on render blueprints
   - type: web
     name: trip_planner
     env: python
     plan: free
 
-    # Upgrade build tools first, then install requirements
     buildCommand: |
+      apt-get update
+      apt-get install -y openjdk-17-jdk-headless
       pip install --upgrade pip setuptools wheel packaging
       pip install -r requirements.txt
 
-    # A src/app.py file must exist and contain `server=app.server`
     startCommand: gunicorn --chdir src app:server
 
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
+      - key: JAVA_HOME
+        value: /usr/lib/jvm/java-17-openjdk-amd64
+      - key: PATH
+        value: /usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH
