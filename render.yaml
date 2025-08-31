@@ -1,21 +1,9 @@
 services:
   - type: web
     name: trip_planner
-    env: python
+    env: docker
     plan: free
-
-    buildCommand: |
-      apt-get update
-      apt-get install -y openjdk-17-jdk-headless
-      pip install --upgrade pip setuptools wheel packaging
-      pip install -r requirements.txt
-
-    startCommand: gunicorn --chdir src app:server
-
+    dockerfilePath: ./Dockerfile
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.10.0
       - key: JAVA_HOME
         value: /usr/lib/jvm/java-17-openjdk-amd64
-      - key: PATH
-        value: /usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH
