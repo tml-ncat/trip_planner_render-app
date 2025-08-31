@@ -4,10 +4,15 @@ services:
     name: trip_planner
     env: python
     plan: free
-    # A requirements.txt file must exist
-    buildCommand: pip install -r requirements.txt
+
+    # Upgrade build tools first, then install requirements
+    buildCommand: |
+      pip install --upgrade pip setuptools wheel packaging
+      pip install -r requirements.txt
+
     # A src/app.py file must exist and contain `server=app.server`
     startCommand: gunicorn --chdir src app:server
+
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
