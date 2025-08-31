@@ -1,4 +1,10 @@
+# Ensure modern build tools
 pip>=25.0
+setuptools>=75.0
+wheel>=0.44
+packaging>=24.2
+
+# App dependencies
 docopt==0.6.2
 dash==2.16.1
 geopandas==0.14.3
