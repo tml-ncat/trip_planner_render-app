@@ -7,6 +7,8 @@ from datetime import datetime, date
 import numpy as np
 import os
 import subprocess 
+from pathlib import Path
+
 
 # Set environment variables for R5
 os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-17-openjdk-amd64"
@@ -33,8 +35,16 @@ def calculate_fare(base_fare, cost_per_mile, cost_per_minute, service_fee, dista
 app = Dash(__name__, suppress_callback_exceptions=True)
 server = app.server
 
-gtfs_path = 'gtfs.zip'
-osm_path = 'durham_new.osm.pbf'
+ROOT = Path(__file__).resolve().parents[1]
+osm_path  = ROOT / "durham_new.osm.pbf"
+gtfs_path = ROOT / "gtfs.zip"
+
+for p in (osm_path, gtfs_path):
+    if not p.exists():
+        raise FileNotFoundError(f"Missing data file: {p}")
+        
+# gtfs_path = 'gtfs.zip'
+# osm_path = 'durham_new.osm.pbf'
 transport_network = r5py.TransportNetwork(osm_path, [gtfs_path])
 
 lat_start, lat_end = 35.88, 36.08
