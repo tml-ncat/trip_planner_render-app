@@ -68,12 +68,21 @@ def calculate_fare(base_fare, cost_per_mile, cost_per_minute, service_fee, dista
 app = Dash(__name__, external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'], suppress_callback_exceptions=True)
 server = app.server
 
-ROOT = Path(__file__).resolve().parents[1]
-osm_path  = ROOT / "durham_new.osm.pbf"
-gtfs_path = ROOT / "gtfs.zip"
-dem_path = ROOT / 'USGS_13_n36w079_20130911.tif'
+ROOT = Path(__file__).resolve().parents[1]        # /app
+DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
 
-for p in (osm_path, gtfs_path):
+def prefer_disk(filename: str) -> Path:
+    on_disk  = DATA_DIR / filename
+    in_image = ROOT / filename
+    return on_disk if on_disk.exists() else in_image
+
+# Keep your variable names & filenames
+osm_path  = prefer_disk("durham_new.osm.pbf")
+gtfs_path = prefer_disk("gtfs.zip")
+dem_path  = prefer_disk("USGS_13_n36w079_20130911.tif")
+
+# sanity check (now includes DEM too)
+for p in (osm_path, gtfs_path, dem_path):
     if not p.exists():
         raise FileNotFoundError(f"Missing data file: {p}")
         
