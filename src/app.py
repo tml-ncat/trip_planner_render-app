@@ -12,7 +12,7 @@ import rasterio
 
 
 # Set environment variables for R5
-os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-17-openjdk-amd64"
+os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-21-openjdk-amd64"
 os.environ["R5_JAR"] = "../R5.jar"
 
 # # Check Java installation
