@@ -1,8 +1,10 @@
 FROM python:3.10-slim
 
-# Java for r5py
+# Java for r5py + libexpat for rasterio
 RUN apt-get update \
- && apt-get install -y --no-install-recommends openjdk-21-jdk-headless \
+ && apt-get install -y --no-install-recommends \
+      openjdk-21-jdk-headless \
+      libexpat1 \
  && rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
