@@ -8,6 +8,7 @@ import numpy as np
 import os
 import subprocess 
 from pathlib import Path
+import rasterio
 
 
 # Set environment variables for R5
@@ -25,6 +26,38 @@ try:
 except Exception as e:
     print("Java installation check failed:", e)
 
+def get_elevation_from_dem(lat, lon, dem_path='path/to/your/dem/file.tif'):
+    with rasterio.open(dem_path) as dem:
+        coords = [(lon, lat)]
+        elevations = list(dem.sample(coords))
+    return elevations[0][0]
+
+def calculate_slope(lat1, lon1, lat2, lon2, dem_path='path/to/your/dem/file.tif'):
+    elevation1 = get_elevation_from_dem(lat1, lon1, dem_path)
+    elevation2 = get_elevation_from_dem(lat2, lon2, dem_path)
+    horizontal_distance = np.sqrt((lat2 - lat1)**2 + (lon2 - lon1)**2) * 111320  # Approx conversion to meters
+    slope = (elevation2 - elevation1) / horizontal_distance
+    return slope
+
+def calculate_route_slopes(line_string, dem_path='path/to/your/dem/file.tif'):
+    slopes = []
+    coords = list(line_string.coords)
+    for i in range(len(coords) - 1):
+        lat1, lon1 = coords[i][1], coords[i][0]
+        lat2, lon2 = coords[i + 1][1], coords[i + 1][0]
+        slope = calculate_slope(lat1, lon1, lat2, lon2, dem_path)
+        slopes.append(slope)
+    return slopes
+
+def summarize_slopes(slopes):
+    mean_slope = np.mean(slopes)
+    max_slope = np.max(slopes)
+    return mean_slope, max_slope
+
+def walking_slope_warning(max_slope, threshold=0.07):
+    if max_slope > threshold:
+        return f"Warning: Walking slope as high as {max_slope:.2%} for some segments"
+    return "Slope is comfortable for walking"
 
 TRANSIT_FARE_PER_RIDE = 1.00
 
@@ -38,6 +71,7 @@ server = app.server
 ROOT = Path(__file__).resolve().parents[1]
 osm_path  = ROOT / "durham_new.osm.pbf"
 gtfs_path = ROOT / "gtfs.zip"
+dem_path = ROOT / 'USGS_13_n36w079_20130911.tif'
 
 for p in (osm_path, gtfs_path):
     if not p.exists():
