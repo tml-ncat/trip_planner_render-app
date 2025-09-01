@@ -65,7 +65,7 @@ def calculate_fare(base_fare, cost_per_mile, cost_per_minute, service_fee, dista
     fare = base_fare + (cost_per_mile * distance) + (cost_per_minute * duration) + service_fee + additional_fees
     return fare
 
-app = Dash(__name__, suppress_callback_exceptions=True)
+app = Dash(__name__, external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'], suppress_callback_exceptions=True)
 server = app.server
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -118,19 +118,19 @@ optimization_options = [
     {'label': 'Walking/Biking Distance', 'value': 'walking_biking_distance'}
 ]
 
-app.layout = html.Div(className='main-container', children=[
+app.layout = html.Div(style={'backgroundColor': '#ffffff', 'boxSizing': 'border-box', 'padding': '10px'}, children=[
     html.Div([
-        html.H1("Trip Planner", className='title'),
-    ], className='title-container'),
+        html.H1("Trip Planner", style={'textAlign': 'center', 'color': '#333333', 'padding': '10px', 'background-color': '#f4f4f9'}),
+    ], style={'width': '100%', 'display': 'block'}),
     html.Div([
         html.Div([
-            html.Label('Enter your origin (lat, lon):', className='input-label'),
-            dcc.Input(id='input-origin', type='text', placeholder='Enter origin lat, lon', className='input-box'),
-            html.Label('Enter your destination (lat, lon):', className='input-label'),
-            dcc.Input(id='input-destination', type='text', placeholder='Enter destination lat, lon', className='input-box'),
-            html.Button('Add Destination', id='add-destination-button', n_clicks=0, className='hidden-button'),
+            html.Label('Enter your origin (lat, lon):', style={'margin': '5px', 'color': '#555555'}),
+            dcc.Input(id='input-origin', type='text', placeholder='Enter origin lat, lon', style={'width': '100%', 'margin': '5px'}),
+            html.Label('Enter your destination (lat, lon):', style={'margin': '5px', 'color': '#555555'}),
+            dcc.Input(id='input-destination', type='text', placeholder='Enter destination lat, lon', style={'width': '100%', 'margin': '5px'}),
+            html.Button('Add Destination', id='add-destination-button', n_clicks=0, style={'margin': '5px', 'background-color': '#1c293a', 'color': 'white', 'display': 'none'}),
             html.Div(id='new-destinations-container'),
-            html.Label('Select Trip Mode:', className='input-label'),
+            html.Label('Select Trip Mode:', style={'margin': '5px', 'color': '#555555'}),
             dcc.RadioItems(
                 id='trip-mode-radio',
                 options=[
@@ -138,10 +138,10 @@ app.layout = html.Div(className='main-container', children=[
                     {'label': 'Different Mode', 'value': 'different'}
                 ],
                 value='same',
-                className='radio-items'
+                labelStyle={'display': 'inline-block', 'margin': '5px'}
             ),
-            html.Br(),
-            html.Label('Departure Time:', className='input-label'),
+            html.Div(id='segment-mode-container', style={'display': 'none'}),
+            html.Label('Departure Time:', style={'margin': '5px', 'color': '#555555'}),
             dcc.RadioItems(
                 id='departure-time-radio',
                 options=[
@@ -149,7 +149,7 @@ app.layout = html.Div(className='main-container', children=[
                     {'label': 'Choose Time', 'value': 'future'}
                 ],
                 value='now',
-                className='radio-items'
+                labelStyle={'display': 'inline-block', 'margin': '5px'}
             ),
             html.Div(id='departure-time-div', children=[
                 dcc.DatePickerSingle(
@@ -157,36 +157,35 @@ app.layout = html.Div(className='main-container', children=[
                     min_date_allowed=date.today(),
                     initial_visible_month=date.today(),
                     date=date.today(),
-                    className='datepicker'
+                    style={'margin': '5px'}
                 ),
                 html.Div([
-                    dcc.Dropdown(id='departure-hour', options=hours_options, placeholder='Hour', className='time-dropdown'),
-                    dcc.Dropdown(id='departure-minute', options=minutes_options, placeholder='Minute', className='time-dropdown')
-                ], className='time-container')
-            ], className='hidden-div'),
-            html.Br(),
-            html.Label('Optimization Criteria:', className='input-label'),
-            dcc.Dropdown(id='optimization-criteria', options=optimization_options, value='total_time', className='dropdown'),
-            html.Button('Calculate Travel Time', id='calculate-button', n_clicks=0, className='calculate-button'),
-            html.Button('Start Over', id='start-over-button', n_clicks=0, className='start-over-button')
-        ], className='left-panel'),
+                    dcc.Dropdown(id='departure-hour', options=hours_options, placeholder='Hour', style={'width': '48%', 'display': 'inline-block', 'margin': '5px'}),
+                    dcc.Dropdown(id='departure-minute', options=minutes_options, placeholder='Minute', style={'width': '48%', 'display': 'inline-block', 'margin': '5px'})
+                ])
+            ], style={'display': 'none'}),
+            html.Label('Optimization Criteria:', style={'margin': '5px', 'color': '#555555'}),
+            dcc.Dropdown(id='optimization-criteria', options=optimization_options, value='total_time', style={'margin': '5px'}),
+            html.Button('Calculate Travel Time', id='calculate-button', n_clicks=0, style={'margin': '5px', 'background-color': '#74bf0c', 'color': 'black', 'font-weight': 'bold'}),
+            html.Button('Start Over', id='start-over-button', n_clicks=0, style={'margin': '5px', 'background-color': '#D9534F', 'color': 'white', 'font-weight': 'bold'})
+        ], style={'width': '50%', 'display': 'inline-block', 'padding': '20px', 'background-color': '#eaeaea', 'boxSizing': 'border-box'}),
         html.Div([
-            html.Label('Select your transport mode:', className='input-label'),
+            html.Label('Select your transport mode:', style={'margin': '5px', 'color': '#555555'}),
             html.Div([
-                html.Button('Transit + Walk 🚶🏻🚌', id='mode-transit-walk', n_clicks=0, className='mode-button'),
-                html.Button('Transit + Bike 🚲🚌', id='mode-transit-bike', n_clicks=0, className='mode-button'),
-                html.Button('Car 🚗', id='mode-car', n_clicks=0, className='mode-button'),
-                html.Button('Bike 🚲', id='mode-bike', n_clicks=0, className='mode-button'),
-                html.Button('Shared Ride 🚕', id='mode-shared-ride', n_clicks=0, className='mode-button'),
-                html.Button('Walk 🚶🏻', id='mode-walk', n_clicks=0, className='mode-button'),
-            ], className='mode-button-container'),
-            html.Div(id='travel-time', className='info-container'),
-            html.Div(id='selected-modes-summary', className='info-container')
-        ], className='right-panel'),
-    ], id='main-content', className='main-content'),
+                html.Button('Transit + Walk 🚶🏻🚌', id='mode-transit-walk', n_clicks=0, style={'margin': '5px', 'background-color': '#1c293a', 'color': 'white'}),
+                html.Button('Transit + Bike 🚲🚌', id='mode-transit-bike', n_clicks=0, style={'margin': '5px', 'background-color': '#1c293a', 'color': 'white'}),
+                html.Button('Car 🚗', id='mode-car', n_clicks=0, style={'margin': '5px', 'background-color': '#1c293a', 'color': 'white'}),
+                html.Button('Bike 🚲', id='mode-bike', n_clicks=0, style={'margin': '5px', 'background-color': '#1c293a', 'color': 'white'}),
+                html.Button('Shared Ride 🚕', id='mode-shared-ride', n_clicks=0, style={'margin': '5px', 'background-color': '#1c293a', 'color': 'white'}),
+                html.Button('Walk 🚶🏻', id='mode-walk', n_clicks=0, style={'margin': '5px', 'background-color': '#1c293a', 'color': 'white'}),
+            ], style={'display': 'flex', 'flex-wrap': 'wrap'}),
+            html.Div(id='travel-time', style={'padding': '10px', 'background-color': '#f4f4f9', 'color': '#333333', 'text-align': 'left'}),
+            html.Div(id='selected-modes-summary', style={'padding': '10px', 'background-color': '#f4f4f9', 'color': '#333333', 'text-align': 'left'})
+        ], style={'width': '50%', 'display': 'inline-block', 'padding': '20px', 'background-color': '#eaeaea', 'boxSizing': 'border-box'}),
+    ], id='main-content', style={'display': 'flex', 'flex-wrap': 'wrap', 'height': 'auto', 'boxSizing': 'border-box'}),
     html.Div([
-        dcc.Graph(id='map-graph', figure=fig, className='map')
-    ], className='map-container'),
+        dcc.Graph(id='map-graph', figure=fig, style={'height': '80vh', 'width': '100%'})
+    ], style={'width': '100%', 'display': 'block', 'boxSizing': 'border-box'}),
 ])
 
 @app.callback(
@@ -209,8 +208,8 @@ def add_new_destination(n_clicks, children):
         children = []
     if n_clicks > 0:
         new_destination = html.Div([
-            html.Label(f'Enter your destination {n_clicks} (lat, lon):', className='input-label'),
-            dcc.Input(id={'type': 'dynamic-destination', 'index': n_clicks}, type='text', placeholder=f'Enter destination {n_clicks} lat, lon', className='input-box')
+            html.Label(f'Enter your destination {n_clicks} (lat, lon):', style={'margin': '5px', 'color': '#555555'}),
+            dcc.Input(id={'type': 'dynamic-destination', 'index': n_clicks}, type='text', placeholder=f'Enter destination {n_clicks} lat, lon', style={'width': '100%', 'margin': '5px'})
         ], style={'margin-top': '10px'})
         children.append(new_destination)
     return children
@@ -244,11 +243,11 @@ def update_segment_mode_dropdowns(trip_mode, n_clicks, origin, destination, dyna
                 {'label': 'Walk 🚶🏻', 'value': 'WALK'}]
 
     segment_dropdowns = []
-    total_segments = len(dynamic_destinations) + 1
+    total_segments = len(dynamic_destinations) + 1  # Origin to first destination, first destination to second, etc.
     for i in range(total_segments):
         segment_dropdowns.append(html.Div([
-            html.Label(f'Segment {i + 1} Mode:', className='input-label'),
-            dcc.Dropdown(id={'type': 'segment-mode', 'index': i}, options=segments, value='CAR', className='dropdown')
+            html.Label(f'Segment {i + 1} Mode:', style={'margin': '5px', 'color': '#555555'}),
+            dcc.Dropdown(id={'type': 'segment-mode', 'index': i}, options=segments, value='CAR', style={'margin': '5px'})
         ]))
 
     return segment_dropdowns
@@ -294,7 +293,6 @@ def update_segment_mode_dropdowns(trip_mode, n_clicks, origin, destination, dyna
      State('mode-walk', 'style')]
 )
 def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clicks, transit_walk_clicks, transit_bike_clicks, car_clicks, bike_clicks, shared_ride_clicks, walk_clicks, optimization_criteria, origin, destination, dynamic_destinations, segment_modes, trip_mode, departure_time_radio, departure_date, departure_hour, departure_minute, current_figure, transit_walk_style, transit_bike_style, car_style, bike_style, shared_ride_style, walk_style):
-
     ctx = callback_context
     trigger = ctx.triggered[0]['prop_id'].split('.')[0]
 
@@ -311,16 +309,21 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
         try:
             lat, lon = map(float, coords_str.split(','))
             return lat, lon
-        except:
+        except Exception as e:
             return None
 
     if trigger == 'map-graph' and clickData:
+        # Count filled destination boxes
         filled_boxes = len([d for d in dynamic_destinations if d])
+
+        # Determine if we can accept more map clicks
         if not origin:
             coords = clickData['points'][0]
             lat, lon = coords['lat'], coords['lon']
             coords_str = f"{lat}, {lon}"
+
             new_figure = go.Figure(data=current_figure['data'], layout=current_figure['layout'])
+
             new_figure.add_trace(go.Scattermapbox(
                 mode='markers+text',
                 lon=[lon],
@@ -336,7 +339,9 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
             coords = clickData['points'][0]
             lat, lon = coords['lat'], coords['lon']
             coords_str = f"{lat}, {lon}"
+
             new_figure = go.Figure(data=current_figure['data'], layout=current_figure['layout'])
+
             new_figure.add_trace(go.Scattermapbox(
                 mode='markers+text',
                 lon=[float(origin.split(',')[1]), lon],
@@ -354,6 +359,7 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
                     coords = clickData['points'][0]
                     lat, lon = coords['lat'], coords['lon']
                     coords_str = f"{lat}, {lon}"
+
                     dynamic_destinations[i] = coords_str
                     new_figure = go.Figure(data=current_figure['data'], layout=current_figure['layout'])
                     new_figure.add_trace(go.Scattermapbox(
@@ -372,7 +378,7 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
     if trigger == 'start-over-button':
         return '', '', fig, [], no_update, mode_styles['mode-transit-walk'], mode_styles['mode-transit-bike'], mode_styles['mode-car'], mode_styles['mode-bike'], mode_styles['mode-shared-ride'], mode_styles['mode-walk'], ''
 
-    mode_of_travel = 'TRANSIT_WALK'
+    mode_of_travel = 'TRANSIT_WALK'  # Default to transit walk if none selected
     if trip_mode == 'same':
         if trigger == 'mode-transit-bike' or (trigger == 'optimization-criteria' and transit_bike_style['background-color'] == '#74bf0c'):
             mode_of_travel = 'TRANSIT_BIKE'
@@ -399,7 +405,7 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
             walk_style['background-color'] = '#74bf0c'
             walk_style['color'] = 'black'
         elif trigger == 'calculate-button':
-            # Determine mode_of_travel based on max clicks if no direct trigger was found
+            # Use the last selected mode when Calculate Travel Time button is clicked
             if car_clicks >= bike_clicks and car_clicks >= transit_walk_clicks and car_clicks >= transit_bike_clicks and car_clicks >= shared_ride_clicks and car_clicks >= walk_clicks:
                 mode_of_travel = 'CAR'
                 mode_styles['mode-car']['background-color'] = '#74bf0c'
@@ -432,44 +438,15 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
             total_cost = 0.0
             all_segments_details = []
             all_route_traces = []
+            all_slopes = []
 
             coords_list = [origin] + [destination] + dynamic_destinations
             coords_list = [coords for coords in coords_list if coords]
 
-            def meters_to_miles(meters):
-                return meters * 0.000621371
-
-            def select_best_option(details, criterion):
-                details['total_time'] = details['travel_time'] + details['wait_time']
-                walking_biking_time = details.groupby('option', group_keys=False).apply(lambda x: x.iloc[0]['travel_time'] + x.iloc[-1]['travel_time']).reset_index(name='walking_biking_time')
-                details['num_transfers'] = details.groupby('option')['segment'].transform('count') - 3
-
-                # Compute walking_biking_distance similar to walking_biking_time
-                walking_biking_distance = details.groupby('option', group_keys=False).apply(
-                    lambda x: x.iloc[0]['distance'] + x.iloc[-1]['distance']
-                ).reset_index(name='walking_biking_distance')
-
-                grouped = details.groupby('option').agg(
-                    total_time=('total_time', 'sum'),
-                    wait_time=('wait_time', 'sum'),
-                    num_transfers=('num_transfers', 'first'),
-                    distance=('distance', 'sum')
-                ).reset_index().merge(walking_biking_time, on='option').merge(walking_biking_distance, on='option')
-
-                if criterion == 'total_time':
-                    return grouped.loc[grouped['total_time'].idxmin()]
-                elif criterion == 'transfers':
-                    return grouped.loc[grouped['num_transfers'].idxmin()]
-                elif criterion == 'wait_time':
-                    return grouped.loc[grouped['wait_time'].idxmin()]
-                elif criterion == 'walking_biking_distance':
-                    return grouped.loc[grouped['walking_biking_distance'].idxmin()]
-                else:
-                    return grouped.loc[grouped['total_time'].idxmin()]
-
             for i in range(len(coords_list) - 1):
                 origin_coords = parse_coordinates(coords_list[i])
                 destination_coords = parse_coordinates(coords_list[i + 1])
+
                 if not origin_coords or not destination_coords:
                     raise ValueError("Invalid coordinates")
 
@@ -488,6 +465,7 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
                 current_segment_mode = segment_modes[i] if trip_mode == 'different' and i < len(segment_modes) else mode_of_travel
 
                 if current_segment_mode == 'SHARED_RIDE':
+                    # Compute car travel time
                     car_itineraries_computer = r5py.DetailedItinerariesComputer(
                         transport_network,
                         origins=origins,
@@ -498,10 +476,13 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
                     car_travel_details = car_itineraries_computer.compute_travel_details()
                     min_car_travel_time = car_travel_details['travel_time'].min()
 
+                    # Calculate additional wait time (normally distributed)
                     wait_time = np.random.normal(loc=8, scale=3)
-                    wait_time = max(1, min(15, wait_time))
+                    wait_time = max(1, min(15, wait_time))  # Bound wait time between 1 and 15
+
+                    # Calculate additional travel time (exponentially distributed)
                     additional_travel_time = np.random.exponential(scale=2)
-                    additional_travel_time = max(1, min(8, additional_travel_time))
+                    additional_travel_time = max(1, min(8, additional_travel_time))  # Bound additional travel time between 1 and 8
 
                     total_segment_travel_time_seconds = min_car_travel_time.total_seconds() + wait_time * 60 + additional_travel_time * 60
                     total_travel_time_seconds += total_segment_travel_time_seconds
@@ -511,6 +492,7 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
 
                     total_distance_miles += car_travel_details['distance'].sum() * 0.000621371
 
+                    # Calculate shared ride fare
                     distance_miles = car_travel_details['distance'].sum() * 0.000621371
                     duration_minutes = total_segment_travel_time_seconds / 60
                     shared_ride_fare = calculate_fare(base_fare=2.36, cost_per_mile=0.76, cost_per_minute=0.25, service_fee=3.58, distance=distance_miles, duration=duration_minutes)
@@ -523,7 +505,7 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
                                 html.Li(f"Base Travel Time: {min_car_travel_time}", style={'padding': '3px', 'background-color': '#f4f4f9', 'color': 'black', 'margin-bottom': '3px'}),
                                 html.Li(f"Wait Time: {wait_time:.2f} minutes", style={'padding': '3px', 'background-color': '#f4f4f9', 'color': 'black', 'margin-bottom': '3px'}),
                                 html.Li(f"Additional Travel Time: {additional_travel_time:.2f} minutes", style={'padding': '3px', 'background-color': '#f4f4f9', 'color': 'black', 'margin-bottom': '3px'})
-                            ]),
+                                ]),
                             html.Li(f"Shared Ride Fare: ${shared_ride_fare:.2f}", style={'padding': '3px', 'background-color': '#f4f4f9', 'color': 'black', 'margin-bottom': '3px'})
                         ])
                     )
@@ -544,6 +526,7 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
                         all_route_traces.append(route_trace)
 
                 else:
+                    # Prepare the transport modes for itinerary computation
                     if current_segment_mode == 'TRANSIT_WALK':
                         transport_modes = [r5py.TransportMode.TRANSIT]
                         access_modes = [r5py.TransportMode.WALK]
@@ -568,19 +551,55 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
                     )
                     travel_details = detailed_itineraries_computer.compute_travel_details()
 
+                    # Filter travel details to ensure it includes both transit and bike segments
                     if current_segment_mode == 'TRANSIT_BIKE':
                         travel_details = travel_details[1:]
 
-                    if current_segment_mode in ['TRANSIT_WALK', 'TRANSIT_BIKE']:
-                        # Use the updated select_best_option function
-                        min_option = select_best_option(travel_details, optimization_criteria)
-                        selected_option_details = travel_details[travel_details['option'] == min_option['option']]
+                    route_trace = None
 
+                    # Conversion functions
+                    def meters_to_miles(meters):
+                        return meters * 0.000621371
+
+                    if current_segment_mode in ['TRANSIT_WALK', 'TRANSIT_BIKE']:
+                        # Group by option and calculate the total travel time
+                        travel_details['total_time'] = travel_details['travel_time'] + travel_details['wait_time']
+
+                        # Calculate walking/biking time as the sum of the first and last segment travel times
+                        walking_biking_time = travel_details.groupby('option', group_keys=False).apply(lambda x: x.iloc[0]['travel_time'] + x.iloc[-1]['travel_time']).reset_index(name='walking_biking_time')
+
+                        # Calculate the number of transfers
+                        travel_details['num_transfers'] = travel_details.groupby('option')['segment'].transform('count') - 3
+
+                        grouped_travel_details = travel_details.groupby('option').agg(
+                            total_time=('total_time', 'sum'),
+                            wait_time=('wait_time', 'sum'),
+                            num_transfers=('num_transfers', 'first'),
+                            distance=('distance', 'sum')
+                        ).reset_index().merge(walking_biking_time, on='option')
+
+                        # Select the best option based on the selected optimization criteria
+                        if optimization_criteria == 'total_time':
+                            min_travel_time_option = grouped_travel_details.loc[grouped_travel_details['total_time'].idxmin()]
+                        elif optimization_criteria == 'transfers':
+                            min_travel_time_option = grouped_travel_details.loc[grouped_travel_details['num_transfers'].idxmin()]
+                        elif optimization_criteria == 'wait_time':
+                            min_travel_time_option = grouped_travel_details.loc[grouped_travel_details['wait_time'].idxmin()]
+                        elif optimization_criteria == 'walking_biking_distance':
+                            min_travel_time_option = grouped_travel_details.loc[grouped_travel_details['distance'].idxmin()]
+                        else:
+                            min_travel_time_option = grouped_travel_details.loc[grouped_travel_details['total_time'].idxmin()]
+
+                        selected_option_details = travel_details[travel_details['option'] == min_travel_time_option['option']]
+
+                        # Calculate total travel time for the selected option
                         total_segment_travel_time_seconds = selected_option_details['total_time'].sum().total_seconds()
                         total_wait_time_seconds = selected_option_details['wait_time'].sum().total_seconds()
                         total_time_seconds = total_segment_travel_time_seconds + total_wait_time_seconds
+
                         total_distance_meters = selected_option_details['distance'].sum()
                         total_distance_miles += meters_to_miles(total_distance_meters)
+
                         total_travel_time_seconds += total_time_seconds
 
                         first_row = selected_option_details.iloc[0]
@@ -590,10 +609,12 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
                         total_walking_biking_time = first_row['travel_time'] + last_row['travel_time']
                         total_out_of_vehicle_time = total_walking_biking_time + selected_option_details['wait_time'].sum()
 
+                        # Calculate transit fare
                         num_segments = len(selected_option_details)
-                        transit_fare = TRANSIT_FARE_PER_RIDE * (num_segments - 2)
+                        transit_fare = TRANSIT_FARE_PER_RIDE * (num_segments - 2)  # Subtracting the walk segments
                         total_cost += transit_fare
 
+                        # Extract and plot the route geometry
                         first_segment = selected_option_details.iloc[0]
                         last_segment = selected_option_details.iloc[-1]
                         transit_segments = selected_option_details.iloc[1:-1]
@@ -645,14 +666,13 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
                             html.Li(f"Total Out of Vehicle Time: {total_out_of_vehicle_time}", style={'padding': '3px', 'background-color': '#f4f4f9', 'color': 'black', 'margin-bottom': '3px', 'text-align': 'left'}),
                             html.Li(f"Total Walking/Biking Time: {total_walking_biking_time}", style={'padding': '3px', 'background-color': '#f4f4f9', 'color': 'black', 'margin-bottom': '3px', 'text-align': 'left'})
                         ]
-
+                        
                         all_segments_details.append(
                             html.Li(f"Segment {i + 1} Travel Time: {hours} hours, {minutes} minutes, and {seconds} seconds", style={'padding': '10px', 'background-color': '#f4f4f9', 'color': 'black', 'margin-bottom': '3px', 'text-align': 'left'}),
                         )
                         all_segments_details.extend(output)
 
                     else:
-                        # For modes like CAR, BICYCLE, WALK (non-transit)
                         min_travel_time = travel_details['travel_time'].min()
                         total_distance_meters = travel_details['distance'].sum()
                         total_distance_miles += meters_to_miles(total_distance_meters)
@@ -682,6 +702,23 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
                             html.Li(f"Segment {i + 1} Travel Time: {hours} hours, {minutes} minutes, and {seconds} seconds", style={'padding': '3px', 'background-color': '#f4f4f9', 'color': 'black', 'margin-bottom': '3px', 'text-align': 'left'}),
                         )
 
+                    # Calculate slope if mode is WALK or BICYCLE
+                    if current_segment_mode in ['WALK', 'BICYCLE']:
+                        try:
+                            line_string = LineString(route_coords)
+                            slopes = calculate_route_slopes(line_string, dem_path)
+                            mean_slope, max_slope = summarize_slopes(slopes)
+                            slope_warning = walking_slope_warning(max_slope)
+                            all_slopes.append(
+                                html.Div([
+                                    html.Li(f"Segment {i + 1} Mean Slope: {mean_slope:.2%}", style={'padding': '3px', 'background-color': '#f4f4f9', 'color': 'black', 'text-align': 'left'}),
+                                    html.Li(f"Segment {i + 1} Max Slope: {max_slope:.2%}", style={'padding': '3px', 'background-color': '#f4f4f9', 'color': 'black', 'text-align': 'left'}),
+                                    html.Li(slope_warning, style={'padding': '3px', 'background-color': '#f4f4f9', 'color': 'black', 'text-align': 'left'})
+                                ], style={'margin-bottom': '3px'})
+                            )
+                        except Exception as e:
+                            print(f"Error calculating slopes: {e}")
+
             total_hours = int(total_travel_time_seconds // 3600)
             total_minutes = int((total_travel_time_seconds % 3600) // 60)
             total_seconds = int(total_travel_time_seconds % 60)
@@ -692,14 +729,16 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
                 html.Li(f"Total Cost: ${total_cost:.2f}", style={'padding': '3px', 'background-color': '#f4f4f9', 'color': 'black', 'margin-bottom': '3px', 'text-align': 'left'})
             ]
 
-            all_details = all_segments_details + total_details
+            all_details = all_segments_details + total_details + all_slopes
 
+            # Clear existing route traces
             current_figure = go.Figure(current_figure)
             current_figure.data = [trace for trace in current_figure.data if trace.mode != 'lines']
 
             for trace in all_route_traces:
                 current_figure.add_trace(trace)
 
+            # Add origin and destination markers back if they were removed
             origin_lon, origin_lat = parse_coordinates(origin)
             destination_lon, destination_lat = parse_coordinates(destination)
             all_lons = [origin_lon, destination_lon] + [parse_coordinates(dest)[1] for dest in dynamic_destinations if dest]
@@ -716,6 +755,7 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
                 showlegend=False
             ))
 
+            # Update styles for selected mode button
             selected_mode_key = {
                 'TRANSIT_WALK': 'mode-transit-walk',
                 'TRANSIT_BIKE': 'mode-transit-bike',
@@ -744,8 +784,10 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
             return origin, destination, current_figure, dynamic_destinations, html.Li(f"Error calculating travel time: {str(e)}", style={'padding': '10px', 'background-color': '#f4f4f9', 'color': 'black', 'margin-bottom': '3px', 'text-align': 'left'}), mode_styles['mode-transit-walk'], mode_styles['mode-transit-bike'], mode_styles['mode-car'], mode_styles['mode-bike'], mode_styles['mode-shared-ride'], mode_styles['mode-walk'], ''
 
     if trigger in ['mode-transit-walk', 'mode-transit-bike', 'mode-car', 'mode-bike', 'mode-shared-ride', 'mode-walk']:
+        # Preserve the origin and destination markers on the map
         origin_coords = parse_coordinates(origin)
         destination_coords = parse_coordinates(destination)
+
         if not origin_coords or not destination_coords:
             raise ValueError("Invalid coordinates")
 
@@ -767,6 +809,7 @@ def update_inputs_and_calculate_travel_time(clickData, n_clicks, start_over_clic
             showlegend=False
         ))
 
+        # Update styles for selected mode button
         selected_mode_key = {
             'TRANSIT_WALK': 'mode-transit-walk',
             'TRANSIT_BIKE': 'mode-transit-bike',
